@@ -1,5 +1,6 @@
+import json
 import os
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, Response, UploadFile
 from langchain import hub
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader
@@ -34,7 +35,7 @@ async def load():
             pipeline_kwargs=pipeline_kwargs,
         )
 
-        model_kwargs = {'device': 'auto'}
+        model_kwargs = {'device': 'cuda'}
         encode_kwargs = {'normalize_embeddings': False}
         emb = HuggingFaceEmbeddings(
             model_name=EMB_MODEL_PATH,
@@ -90,4 +91,5 @@ async def query(q: str):
         raise HTTPException(status_code=400, detail="Please add doc first")
 
     ans = qa.run(q)
-    return {"ans": ans}
+    content = json.dumps({"ans": ans}, ensure_ascii=False)
+    return Response(content=content, media_type='application/json;charset=utf-8')
