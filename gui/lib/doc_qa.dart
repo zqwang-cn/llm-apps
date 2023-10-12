@@ -136,8 +136,11 @@ class _DocQAState extends State<DocQA> {
                     child: const Text('提问'),
                     onPressed: () {
                       startLoading(context);
-                      http.post(Uri.parse('$apiRoot/doc-qa/query'),
-                          body: {'q': question.text}).then((response) {
+                      http
+                          .post(Uri.parse('$apiRoot/doc-qa/query'),
+                              headers: {"content-type": "application/json"},
+                              body: json.encode({'q': question.text}))
+                          .then((response) {
                         stopLoading(context);
                         if (response.statusCode == 200) {
                           showMsg(context, '调用成功');

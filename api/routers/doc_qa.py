@@ -8,6 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.llms import HuggingFacePipeline
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
+from pydantic import BaseModel
 
 LLM_MODEL_PATH = "../chinese-alpaca-2-13b"
 EMB_MODEL_PATH = "../all-MiniLM-L6-v2"
@@ -85,11 +86,15 @@ async def add_doc(file: UploadFile):
     )
 
 
-@router.get("/doc-qa/query", tags=["doc-qa"])
-async def query(q: str):
+class Query(BaseModel):
+    q: str
+
+
+@router.post("/doc-qa/query", tags=["doc-qa"])
+async def query(query: Query):
     if qa is None:
         raise HTTPException(status_code=400, detail="Please add doc first")
 
-    ans = qa.run(q)
+    ans = qa.run(query.q)
     content = json.dumps({"ans": ans}, ensure_ascii=False)
     return Response(content=content, media_type='application/json;charset=utf-8')
