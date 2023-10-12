@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const apiRoot = 'http://myserver:8000';
+
 void showMsg(context, msg) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

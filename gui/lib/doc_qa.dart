@@ -38,8 +38,7 @@ class _DocQAState extends State<DocQA> {
                         onPressed: () {
                           startLoading(context);
                           http
-                              .get(Uri.parse(
-                                  'http://localhost:8000/doc-qa/load'))
+                              .get(Uri.parse('$apiRoot/doc-qa/load'))
                               .then((response) {
                             stopLoading(context);
                             var msg = response.statusCode == 204
@@ -57,8 +56,7 @@ class _DocQAState extends State<DocQA> {
                         onPressed: () {
                           startLoading(context);
                           http
-                              .get(Uri.parse(
-                                  'http://localhost:8000/doc-qa/unload'))
+                              .get(Uri.parse('$apiRoot/doc-qa/unload'))
                               .then((response) {
                             stopLoading(context);
                             var msg = response.statusCode == 204
@@ -92,9 +90,7 @@ class _DocQAState extends State<DocQA> {
                               filename = file.name;
                             });
                             var request = http.MultipartRequest(
-                                'POST',
-                                Uri.parse(
-                                    'http://localhost:8000/doc-qa/add-doc'));
+                                'POST', Uri.parse('$apiRoot/doc-qa/add-doc'));
                             var multipart = http.MultipartFile.fromBytes(
                                 'file', file.bytes!.toList(),
                                 filename: file.name);
@@ -140,10 +136,8 @@ class _DocQAState extends State<DocQA> {
                     child: const Text('提问'),
                     onPressed: () {
                       startLoading(context);
-                      http
-                          .get(Uri.parse(
-                              'http://localhost:8000/doc-qa/query?q=${question.text}'))
-                          .then((response) {
+                      http.post(Uri.parse('$apiRoot/doc-qa/query'),
+                          body: {'q': question.text}).then((response) {
                         stopLoading(context);
                         if (response.statusCode == 200) {
                           showMsg(context, '调用成功');
