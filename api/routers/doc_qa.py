@@ -1,6 +1,7 @@
 import json
 import os
-from fastapi import APIRouter, HTTPException, Response, UploadFile
+from typing import Annotated
+from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile
 from langchain import hub
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader
@@ -18,7 +19,11 @@ router = APIRouter()
 
 
 @router.post("/doc-qa/add-doc", tags=["doc-qa"], status_code=204)
-async def add_doc(file: UploadFile, llm_name: str, emb_name: str):
+async def add_doc(
+    file: Annotated[UploadFile, File],
+    llm_name: Annotated[str, Form()],
+    emb_name: Annotated[str, Form()],
+):
     if llm_name not in models or emb_name not in models:
         raise HTTPException(status_code=400, detail="Please load models first")
 

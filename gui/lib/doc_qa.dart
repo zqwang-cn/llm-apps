@@ -14,6 +14,9 @@ class DocQA extends StatefulWidget {
 }
 
 class _DocQAState extends State<DocQA> {
+  List<String>? names;
+  TextEditingController llm = TextEditingController();
+  TextEditingController emb = TextEditingController();
   String filename = '未选择文件';
   TextEditingController question = TextEditingController();
   TextEditingController answer = TextEditingController();
@@ -33,42 +36,55 @@ class _DocQAState extends State<DocQA> {
                   OverflowBar(
                     spacing: 10,
                     children: <Widget>[
-                      ElevatedButton(
-                        child: const Text('加载模型'),
-                        onPressed: () {
-                          startLoading(context);
-                          http
-                              .get(Uri.parse('$apiRoot/doc-qa/load'))
-                              .then((response) {
-                            stopLoading(context);
-                            var msg = response.statusCode == 204
-                                ? '加载模型成功'
-                                : '加载模型失败';
-                            showMsg(context, msg);
-                          }).onError((error, stackTrace) {
-                            stopLoading(context);
-                            showMsg(context, '加载模型失败');
-                          });
-                        },
+                      DropdownMenu<String>(
+                        label: const Text('llm模型'),
+                        initialSelection: names?.first,
+                        controller: llm,
+                        dropdownMenuEntries: names == null
+                            ? []
+                            : names!
+                                .map<DropdownMenuEntry<String>>((String value) {
+                                return DropdownMenuEntry<String>(
+                                    value: value, label: value);
+                              }).toList(),
+                      ),
+                      DropdownMenu<String>(
+                        label: const Text('embedding模型'),
+                        initialSelection: names?.first,
+                        controller: emb,
+                        dropdownMenuEntries: names == null
+                            ? []
+                            : names!
+                                .map<DropdownMenuEntry<String>>((String value) {
+                                return DropdownMenuEntry<String>(
+                                    value: value, label: value);
+                              }).toList(),
                       ),
                       ElevatedButton(
-                        child: const Text('卸载模型'),
-                        onPressed: () {
-                          startLoading(context);
-                          http
-                              .get(Uri.parse('$apiRoot/doc-qa/unload'))
-                              .then((response) {
-                            stopLoading(context);
-                            var msg = response.statusCode == 204
-                                ? '卸载模型成功'
-                                : '卸载模型失败';
-                            showMsg(context, msg);
-                          }).onError((error, stackTrace) {
-                            stopLoading(context);
-                            showMsg(context, '卸载模型失败');
-                          });
-                        },
-                      ),
+                          child: const Text('获取模型列表'),
+                          onPressed: () {
+                            if (names == null) {
+                              startLoading(context);
+                              http
+                                  .get(Uri.parse('$apiRoot/models'))
+                                  .then((result) {
+                                if (result.statusCode == 200) {
+                                  var infos = json.decode(result.body);
+                                  setState(() {
+                                    names = infos.keys.toList();
+                                  });
+                                  stopLoading(context);
+                                  showMsg(context, '获取模型列表成功');
+                                } else {
+                                  stopLoading(context);
+                                  showMsg(context, '获取模型列表失败');
+                                }
+                              }).onError((error, stackTrace) {
+                                stopLoading(context);
+                                showMsg(context, '获取模型列表失败');
+                              });
+                            }
+                          }),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -91,6 +107,8 @@ class _DocQAState extends State<DocQA> {
                             });
                             var request = http.MultipartRequest(
                                 'POST', Uri.parse('$apiRoot/doc-qa/add-doc'));
+                            request.fields['llm_name'] = llm.text;
+                            request.fields['emb_name'] = emb.text;
                             var multipart = http.MultipartFile.fromBytes(
                                 'file', file.bytes!.toList(),
                                 filename: file.name);
