@@ -14,7 +14,6 @@ class DocQA extends StatefulWidget {
 }
 
 class _DocQAState extends State<DocQA> {
-  List<String>? names;
   TextEditingController llm = TextEditingController();
   TextEditingController emb = TextEditingController();
   String filename = '未选择文件';
@@ -38,53 +37,26 @@ class _DocQAState extends State<DocQA> {
                     children: <Widget>[
                       DropdownMenu<String>(
                         label: const Text('llm模型'),
-                        initialSelection: names?.first,
+                        initialSelection:
+                            modelInfos.isEmpty ? null : modelInfos.keys.first,
                         controller: llm,
-                        dropdownMenuEntries: names == null
-                            ? []
-                            : names!
-                                .map<DropdownMenuEntry<String>>((String value) {
-                                return DropdownMenuEntry<String>(
-                                    value: value, label: value);
-                              }).toList(),
+                        dropdownMenuEntries: modelInfos.keys
+                            .map<DropdownMenuEntry<String>>((String value) {
+                          return DropdownMenuEntry<String>(
+                              value: value, label: value);
+                        }).toList(),
                       ),
                       DropdownMenu<String>(
                         label: const Text('embedding模型'),
-                        initialSelection: names?.first,
+                        initialSelection:
+                            modelInfos.isEmpty ? null : modelInfos.keys.first,
                         controller: emb,
-                        dropdownMenuEntries: names == null
-                            ? []
-                            : names!
-                                .map<DropdownMenuEntry<String>>((String value) {
-                                return DropdownMenuEntry<String>(
-                                    value: value, label: value);
-                              }).toList(),
+                        dropdownMenuEntries: modelInfos.keys
+                            .map<DropdownMenuEntry<String>>((String value) {
+                          return DropdownMenuEntry<String>(
+                              value: value, label: value);
+                        }).toList(),
                       ),
-                      ElevatedButton(
-                          child: const Text('获取模型列表'),
-                          onPressed: () {
-                            if (names == null) {
-                              startLoading(context);
-                              http
-                                  .get(Uri.parse('$apiRoot/models'))
-                                  .then((result) {
-                                if (result.statusCode == 200) {
-                                  var infos = json.decode(result.body);
-                                  setState(() {
-                                    names = infos.keys.toList();
-                                  });
-                                  stopLoading(context);
-                                  showMsg(context, '获取模型列表成功');
-                                } else {
-                                  stopLoading(context);
-                                  showMsg(context, '获取模型列表失败');
-                                }
-                              }).onError((error, stackTrace) {
-                                stopLoading(context);
-                                showMsg(context, '获取模型列表失败');
-                              });
-                            }
-                          }),
                     ],
                   ),
                   const SizedBox(height: 20),
