@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'doc_qa.dart';
+import 'models.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -17,6 +18,20 @@ class Home extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('全部应用'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Models()),
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: const Text('模型管理'),
+            )
+          ],
         ),
         body: Center(
           child: Wrap(
