@@ -4,63 +4,26 @@ from fastapi import APIRouter, HTTPException, Response, UploadFile
 from langchain import hub
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.llms import HuggingFacePipeline
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from pydantic import BaseModel
+from .models import models
 
-LLM_MODEL_PATH = "../chinese-alpaca-2-13b"
-EMB_MODEL_PATH = "../all-MiniLM-L6-v2"
 UPLOAD_DIR = 'upload/'
 RAG_PROMPT = hub.pull("rlm/rag-prompt-llama")
 
-llm = None
-emb = None
 qa = None
 
 router = APIRouter()
 
 
-@router.get("/doc-qa/load", tags=["doc-qa"], status_code=204)
-async def load():
-    global llm
-    global emb
-    if llm is None:
-        model_kwargs = {'device_map': 'auto'}
-        pipeline_kwargs = {'max_new_tokens': 1000}
-        llm = HuggingFacePipeline.from_model_id(
-            model_id=LLM_MODEL_PATH,
-            task="text-generation",
-            model_kwargs=model_kwargs,
-            pipeline_kwargs=pipeline_kwargs,
-        )
-
-        model_kwargs = {'device': 'cuda'}
-        encode_kwargs = {'normalize_embeddings': False}
-        emb = HuggingFaceEmbeddings(
-            model_name=EMB_MODEL_PATH,
-            model_kwargs=model_kwargs,
-            encode_kwargs=encode_kwargs,
-        )
-
-
-@router.get("/doc-qa/unload", tags=["doc-qa"], status_code=204)
-async def unload():
-    global llm
-    global emb
-    if llm:
-        del llm
-        llm = None
-    if emb:
-        del emb
-        emb = None
-
-
 @router.post("/doc-qa/add-doc", tags=["doc-qa"], status_code=204)
-async def add_doc(file: UploadFile):
-    if llm is None:
+async def add_doc(file: UploadFile, llm_name: str, emb_name: str):
+    if llm_name not in models or emb_name not in models:
         raise HTTPException(status_code=400, detail="Please load models first")
+
+    llm = models[llm_name]
+    emb = models[emb_name]
 
     content = await file.read()
     filename = os.path.join(UPLOAD_DIR, file.filename)
