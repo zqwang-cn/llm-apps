@@ -6,6 +6,7 @@ model_infos = {
     'llm': {
         'type': 'HuggingFacePipeline',
         'path': '../chinese-alpaca-2-13b',
+        'template': 'CNLlama2Template',
         'status': 'unloaded',
     },
     'embedding': {
