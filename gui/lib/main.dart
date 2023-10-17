@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'chat.dart';
 import 'doc_qa.dart';
 import 'models.dart';
 
@@ -36,13 +37,13 @@ class Home extends StatelessWidget {
         body: Center(
           child: Wrap(
             children: <Widget>[
-              const Card(
+              Card(
                 child: SizedBox(
                   width: 300,
                   height: 100,
                   child: Column(
                     children: <Widget>[
-                      ListTile(
+                      const ListTile(
                         title: Text('聊天机器人'),
                         subtitle: Text('与机器人进行多轮连续对话'),
                         leading: Icon(Icons.album),
@@ -51,8 +52,14 @@ class Home extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           TextButton(
-                            onPressed: null,
-                            child: Text('运行'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Chat()),
+                              );
+                            },
+                            child: const Text('运行'),
                           ),
                         ],
                       ),
