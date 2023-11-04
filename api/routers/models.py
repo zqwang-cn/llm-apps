@@ -1,21 +1,43 @@
 from fastapi import APIRouter, HTTPException
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.llms import HuggingFacePipeline
+from langchain.embeddings import HuggingFaceEmbeddings, LlamaCppEmbeddings
+from langchain.llms import HuggingFacePipeline, LlamaCpp
+from .utils import summarize_templates
 
 model_infos = {
+    # 'llm': {
+    #     'type': 'HuggingFacePipeline',
+    #     'path': '../chinese-alpaca-2-13b',
+    #     'template': 'CNLlama2Template',
+    #     'status': 'unloaded',
+    # },
+    # 'embedding': {
+    #     'type': 'HuggingFaceEmbeddings',
+    #     'path': '../all-MiniLM-L6-v2',
+    #     'status': 'unloaded',
+    # },
     'llm': {
-        'type': 'HuggingFacePipeline',
-        'path': '../chinese-alpaca-2-13b',
+        'type': 'LlamaCpp',
+        'path': '../chinese-alpaca-2-13b/ggml-model-q4_0.gguf',
         'template': 'CNLlama2Template',
+        'summarize_templates': summarize_templates['cnllama2'],
         'status': 'unloaded',
     },
     'embedding': {
-        'type': 'HuggingFaceEmbeddings',
-        'path': '../all-MiniLM-L6-v2',
+        'type': 'LlamaCppEmbeddings',
+        'path': '../chinese-alpaca-2-13b/ggml-model-q4_0.gguf',
         'status': 'unloaded',
     },
 }
 models = {}
+
+
+def get_model(name):
+    if name not in model_infos:
+        raise HTTPException(status_code=400, detail='No such model')
+    if name not in models:
+        raise HTTPException(status_code=400, detail='Model unloaded')
+    return model_infos[name], models[name]
+
 
 router = APIRouter()
 
@@ -50,6 +72,11 @@ def load(name: str):
             model_kwargs=model_kwargs,
             encode_kwargs=encode_kwargs,
         )
+    elif info['type'] == 'LlamaCpp':
+        kwargs = {'n_ctx': 2048}
+        models[name] = LlamaCpp(model_path=info['path'], **kwargs)
+    elif info['type'] == 'LlamaCppEmbeddings':
+        models[name] = LlamaCppEmbeddings(model_path=info['path'])
     info['status'] = 'loaded'
 
 
