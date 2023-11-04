@@ -55,7 +55,7 @@ async def summarize(
         **kwargs,
     )
     docs = await load_doc(file)
-    result = chain.run(docs)
+    summary = chain.run(docs)
 
-    content = json.dumps({"result": result}, ensure_ascii=False)
+    content = json.dumps({"summary": summary}, ensure_ascii=False)
     return Response(content=content, media_type='application/json;charset=utf-8')

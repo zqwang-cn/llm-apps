@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'doc_qa.dart';
 import 'models.dart';
+import 'summarize.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -97,13 +98,13 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-              const Card(
+              Card(
                 child: SizedBox(
                   width: 300,
                   height: 100,
                   child: Column(
                     children: <Widget>[
-                      ListTile(
+                      const ListTile(
                         title: Text('文本摘要'),
                         subtitle: Text('将较长文本整理为简短摘要'),
                         leading: Icon(Icons.album),
@@ -112,8 +113,14 @@ class Home extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           TextButton(
-                            onPressed: null,
-                            child: Text('运行'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Summarize()),
+                              );
+                            },
+                            child: const Text('运行'),
                           ),
                         ],
                       ),
