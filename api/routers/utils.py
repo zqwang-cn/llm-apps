@@ -1,15 +1,29 @@
 import os
+import tempfile
 from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader
 
 
 UPLOAD_DIR = 'upload/'
 
 
-async def load_doc(file):
+def gen_temp(filename, dir=UPLOAD_DIR):
+    main, ext = os.path.splitext(filename)
+    f = tempfile.NamedTemporaryFile(
+        dir=dir, prefix=main + '_', suffix=ext, delete=False
+    )
+    return f
+
+
+async def save_file(file):
     content = await file.read()
-    filename = os.path.join(UPLOAD_DIR, file.filename)
-    with open(filename, 'wb') as f:
-        f.write(content)
+    f = gen_temp(file.filename)
+    f.write(content)
+    f.close()
+    return f.name
+
+
+async def load_doc(file):
+    filename = await save_file(file)
 
     if filename.endswith('.txt'):
         loader = TextLoader(filename)
