@@ -73,7 +73,7 @@ def load(name: str):
             encode_kwargs=encode_kwargs,
         )
     elif info['type'] == 'LlamaCpp':
-        kwargs = {'n_ctx': 2048}
+        kwargs = {'n_ctx': 4096}
         models[name] = LlamaCpp(model_path=info['path'], **kwargs)
     elif info['type'] == 'LlamaCppEmbeddings':
         models[name] = LlamaCppEmbeddings(model_path=info['path'])

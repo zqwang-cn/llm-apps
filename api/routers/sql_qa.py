@@ -47,13 +47,13 @@ async def query(query: SQLQuery):
     if query.type == "sql":
         chain = create_sql_query_chain(llm, db)
         sql = chain.invoke({"question": query.question})
-        result = {"sql": sql}
+        result = {"result": sql}
     elif query.type == "answer":
         chain = SQLDatabaseChain.from_llm(llm, db)
         answer = chain.run(query.question)
-        result = {"answer": answer}
+        result = {"result": answer}
     else:
-        raise HTTPException(status_code=400, detail=f"Do not support type {query.type}")
+        raise HTTPException(status_code=400, detail=f"Unsupported type {query.type}")
 
     content = json.dumps(result, ensure_ascii=False)
     return Response(content=content, media_type="application/json;charset=utf-8")
