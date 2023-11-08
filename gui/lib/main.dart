@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'doc_qa.dart';
 import 'models.dart';
+import 'sql_qa.dart';
 import 'summarize.dart';
 
 void main() {
@@ -118,6 +119,36 @@ class Home extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const Summarize()),
+                              );
+                            },
+                            child: const Text('运行'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: SizedBox(
+                  width: 300,
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const ListTile(
+                        title: Text('数据库问答'),
+                        subtitle: Text('使用SQL对关系型数据库内容进行问答'),
+                        leading: Icon(Icons.album),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SQLQA()),
                               );
                             },
                             child: const Text('运行'),
