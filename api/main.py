@@ -1,6 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import chat, doc_qa, jsonformer, models, sql_qa, summarize
+from routers import (
+    chat,
+    doc_qa,
+    jsonformer,
+    llamacpp_grammar,
+    models,
+    sql_qa,
+    summarize,
+)
 
 app = FastAPI()
 origins = ["*"]
@@ -17,3 +25,4 @@ app.include_router(doc_qa.router)
 app.include_router(summarize.router)
 app.include_router(sql_qa.router)
 app.include_router(jsonformer.router)
+app.include_router(llamacpp_grammar.router)
