@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'chat.dart';
 import 'doc_qa.dart';
+import 'jsonformer.dart';
 import 'models.dart';
 import 'sql_qa.dart';
 import 'summarize.dart';
@@ -149,6 +150,36 @@ class Home extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const SQLQA()),
+                              );
+                            },
+                            child: const Text('运行'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: SizedBox(
+                  width: 300,
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const ListTile(
+                        title: Text('格式化输出（Jsonformer）'),
+                        subtitle: Text('使用Jsonformer格式化Huggingface模型的输出'),
+                        leading: Icon(Icons.album),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Jsonformer()),
                               );
                             },
                             child: const Text('运行'),
