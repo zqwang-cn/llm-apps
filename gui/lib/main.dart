@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'chat.dart';
 import 'doc_qa.dart';
 import 'jsonformer.dart';
+import 'llamacpp_grammar.dart';
 import 'models.dart';
 import 'sql_qa.dart';
 import 'summarize.dart';
@@ -180,6 +181,37 @@ class Home extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const Jsonformer()),
+                              );
+                            },
+                            child: const Text('运行'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: SizedBox(
+                  width: 300,
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const ListTile(
+                        title: Text('格式化输出（LlamaCpp）'),
+                        subtitle: Text('使用自定义语法格式化LlamaCpp模型的输出'),
+                        leading: Icon(Icons.album),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LlamacppGrammar()),
                               );
                             },
                             child: const Text('运行'),
