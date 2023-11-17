@@ -3,13 +3,13 @@ import tempfile
 from langchain.document_loaders import TextLoader, UnstructuredWordDocumentLoader
 
 
-UPLOAD_DIR = 'upload/'
+UPLOAD_DIR = "upload/"
 
 
 def gen_temp(filename, dir=UPLOAD_DIR):
     main, ext = os.path.splitext(filename)
     f = tempfile.NamedTemporaryFile(
-        dir=dir, prefix=main + '_', suffix=ext, delete=False
+        dir=dir, prefix=main + "_", suffix=ext, delete=False
     )
     return f
 
@@ -25,9 +25,9 @@ async def save_file(file):
 async def load_doc(file):
     filename = await save_file(file)
 
-    if filename.endswith('.txt'):
+    if filename.endswith(".txt"):
         loader = TextLoader(filename)
-    elif filename.endswith(('.doc', 'docx')):
+    elif filename.endswith((".doc", "docx")):
         loader = UnstructuredWordDocumentLoader(
             filename, mode="single", strategy="fast"
         )
@@ -35,52 +35,52 @@ async def load_doc(file):
 
 
 class CNLlama2Template:
-    prefix = '<<SYS>>\n{system}\n<</SYS>>\n\n'
-    prompt = '[INST] {query} [/INST] '
-    system = 'You are a helpful assistant. 你是一个乐于助人的助手。'
-    bos = '<s>'
-    eos = '</s>'
+    prefix = "<<SYS>>\n{system}\n<</SYS>>\n\n"
+    prompt = "[INST] {query} [/INST] "
+    system = "You are a helpful assistant. 你是一个乐于助人的助手。"
+    bos = "<s>"
+    eos = "</s>"
 
     def format(self, dialog):
         system = (
-            dialog.pop(0)['content'] if dialog[0]['role'] == 'system' else self.system
+            dialog.pop(0)["content"] if dialog[0]["role"] == "system" else self.system
         )
         prefix = self.prefix.format(system=system)
-        dialog[0]['content'] = prefix + dialog[0]['content']
-        result = ''
+        dialog[0]["content"] = prefix + dialog[0]["content"]
+        result = ""
         for prompt, answer in zip(dialog[0::2], dialog[1::2]):
             result += (
                 self.bos
-                + self.prompt.format(query=prompt['content'].strip())
-                + answer['content'].strip()
-                + ' '
+                + self.prompt.format(query=prompt["content"].strip())
+                + answer["content"].strip()
+                + " "
                 + self.eos
             )
 
-        result += self.bos + self.prompt.format(query=dialog[-1]['content'].strip())
+        result += self.bos + self.prompt.format(query=dialog[-1]["content"].strip())
         return result
 
 
 def get_template(name):
-    return eval(name + '()')
+    return eval(name + "()")
 
 
 summarize_templates = {
-    'cnllama2': {
-        'stuff': (
+    "cnllama2": {
+        "stuff": (
             "[INST] <<SYS>>\n"
             "You are a helpful assistant. 你是一个乐于助人的助手。\n"
             "<</SYS>>\n\n"
             "请为以下文字写一段摘要:\n{text} [/INST]"
         ),
-        'refine': {
-            'question': (
+        "refine": {
+            "question": (
                 "[INST] <<SYS>>\n"
                 "You are a helpful assistant. 你是一个乐于助人的助手。\n"
                 "<</SYS>>\n\n"
                 "请为以下文字写一段摘要:\n{text} [/INST]"
             ),
-            'refine': (
+            "refine": (
                 "[INST] <<SYS>>\n"
                 "You are a helpful assistant. 你是一个乐于助人的助手。\n"
                 "<</SYS>>\n\n"
@@ -95,3 +95,10 @@ summarize_templates = {
         },
     }
 }
+
+default_web_request_template = """Between >>> and <<< are the raw search result text from Internet.
+Extract the answer to the question '{query}' or say "not found" if the information is not contained.
+Use the format
+Extracted:<answer or "not found">
+>>> {requests_result} <<<
+Extracted:"""

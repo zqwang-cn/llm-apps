@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from langchain.embeddings import HuggingFaceEmbeddings, LlamaCppEmbeddings
 from langchain.llms import HuggingFacePipeline, LlamaCpp
-from .utils import summarize_templates
+from .utils import *
 
 model_infos = {
     "huggingface": {
         "type": "HuggingFacePipeline",
         "path": "../../chinese-alpaca-2-13b",
         "template": "CNLlama2Template",
+        "web_request_template": default_web_request_template,
         "status": "unloaded",
     },
     "huggingface-emb": {
@@ -21,6 +22,7 @@ model_infos = {
         "kwargs": {"n_ctx": 4096},
         "template": "CNLlama2Template",
         "summarize_templates": summarize_templates["cnllama2"],
+        "web_request_template": default_web_request_template,
         "status": "unloaded",
     },
     "llamacpp-emb": {
@@ -31,13 +33,13 @@ model_infos = {
     "llamacpp-json": {
         "type": "LlamaCpp",
         "path": "../../chinese-alpaca-2-13b/ggml-model-q4_0.gguf",
-        "kwargs": {"n_ctx": 4096, "grammar_path": "grammar/json.gbnf"},
+        "kwargs": {"n_ctx": 4096, "grammar_path": "grammars/json.gbnf"},
         "status": "unloaded",
     },
     "llamacpp-list": {
         "type": "LlamaCpp",
         "path": "../../chinese-alpaca-2-13b/ggml-model-q4_0.gguf",
-        "kwargs": {"n_ctx": 4096, "grammar_path": "grammar/list.gbnf"},
+        "kwargs": {"n_ctx": 4096, "grammar_path": "grammars/list.gbnf"},
         "status": "unloaded",
     },
 }
