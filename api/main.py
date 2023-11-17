@@ -8,6 +8,7 @@ from routers import (
     models,
     sql_qa,
     summarize,
+    web_request,
 )
 
 app = FastAPI()
@@ -26,3 +27,4 @@ app.include_router(summarize.router)
 app.include_router(sql_qa.router)
 app.include_router(jsonformer.router)
 app.include_router(llamacpp_grammar.router)
+app.include_router(web_request.router)
