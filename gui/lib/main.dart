@@ -7,6 +7,7 @@ import 'llamacpp_grammar.dart';
 import 'models.dart';
 import 'sql_qa.dart';
 import 'summarize.dart';
+import 'web_request.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -212,6 +213,36 @@ class Home extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const LlamacppGrammar()),
+                              );
+                            },
+                            child: const Text('运行'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Card(
+                child: SizedBox(
+                  width: 300,
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      const ListTile(
+                        title: Text('网络问答'),
+                        subtitle: Text('获取网络内容（如搜索结果），并进行问答'),
+                        leading: Icon(Icons.album),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const WebRequest()),
                               );
                             },
                             child: const Text('运行'),
